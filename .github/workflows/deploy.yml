@@ -49,4 +49,4 @@ jobs:
 
       - name: Deploy to Elastic Beanstalk
         run: |
-          eb deploy Env-redha-test --staged
+          eb deploy Env-redha-test
