@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import joblib
-import numpy as np
+import numpy as np 
 
 # Charger le modèle
 model = joblib.load('data/churn_model_clean.pkl')
