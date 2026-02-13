@@ -1,96 +1,498 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Churn Prediction App</title>
+    <title>Churn Prediction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg:        #f0f4f8;
+            --surface:   #ffffff;
+            --surface2:  #f6f8fa;
+            --border:    #dde3ea;
+            --accent:    #0057ff;
+            --accent2:   #0041cc;
+            --danger:    #e03050;
+            --text:      #1a2233;
+            --muted:     #6b7b93;
+            --radius:    14px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
+            font-family: 'DM Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            justify-content: center;
+            padding: 2rem 1rem;
         }
 
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
+        /* Subtle grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,87,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,87,255,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
         }
 
-        h1 {
-            font-size: 1.5rem;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-weight: bold;
-            margin-top: 10px;
-            display: block;
-            color: #555;
-        }
-
-        input[type="text"], input[type="submit"] {
+        .wrapper {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
+            max-width: 460px;
         }
 
-        input[type="submit"] {
-            background-color: #28a745;
-            color: white;
-            border: none;
+        /* Header */
+        .header {
+            margin-bottom: 2rem;
+        }
+
+        .header .tag {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(0,87,255,0.07);
+            border: 1px solid rgba(0,87,255,0.18);
+            border-radius: 4px;
+            padding: 3px 10px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .header h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1.15;
+            color: var(--text);
+        }
+
+        .header h1 span {
+            color: var(--accent);
+        }
+
+        .header p {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* Card */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        /* Form fields */
+        .field {
+            margin-bottom: 1.25rem;
+        }
+
+        .field label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .field label .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .field input {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            color: var(--text);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .field input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0,87,255,0.1);
+        }
+
+        .field input::placeholder {
+            color: var(--muted);
+            opacity: 0.5;
+        }
+
+        /* Toggle for Account Manager */
+        .toggle-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 0.6rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            color: var(--muted);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.82rem;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.18s;
         }
 
-        input[type="submit"]:hover {
-            background-color: #218838;
+        .toggle-btn.active {
+            background: rgba(0,87,255,0.08);
+            border-color: var(--accent);
+            color: var(--accent);
         }
 
-        #result {
-            margin-top: 20px;
-            font-size: 1.2rem;
-            color: #333;
+        /* Submit button */
+        .btn-submit {
+            width: 100%;
+            margin-top: 0.75rem;
+            padding: 0.85rem;
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            border-radius: 9px;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.12s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit:hover {
+            background: var(--accent2);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn-submit .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin: 0 auto;
+        }
+
+        .btn-submit.loading .label { display: none; }
+        .btn-submit.loading .spinner { display: block; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1.75rem 0;
+        }
+
+        /* Result panel */
+        .result-panel {
+            display: none;
+            animation: slideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .result-panel.visible {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .result-verdict {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.1rem 1.25rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+        }
+
+        .result-verdict.churn {
+            background: rgba(255,77,109,0.08);
+            border-color: rgba(255,77,109,0.25);
+        }
+
+        .result-verdict.retain {
+            background: rgba(0,87,255,0.06);
+            border-color: rgba(0,87,255,0.18);
+        }
+
+        .verdict-icon {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        .verdict-text .main {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .verdict-text .main.churn { color: var(--danger); }
+        .verdict-text .main.retain { color: var(--accent); }
+
+        .verdict-text .sub {
+            font-size: 0.74rem;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        /* Probability bar */
+        .proba-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+        }
+
+        .proba-label {
+            font-size: 0.72rem;
+            color: var(--muted);
+        }
+
+        .proba-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .proba-bar-track {
+            width: 100%;
+            height: 5px;
+            background: var(--surface2);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .proba-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            width: 0%;
+        }
+
+        .proba-bar-fill.churn { background: var(--danger); }
+        .proba-bar-fill.retain { background: var(--accent); }
+
+        /* Error */
+        .error-msg {
+            padding: 0.85rem 1rem;
+            background: rgba(255,77,109,0.08);
+            border: 1px solid rgba(255,77,109,0.25);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--danger);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--muted);
+            opacity: 0.6;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Churn Prediction</h1>
-        <form action="/predict" method="POST">
-            <label for="age">Age:</label>
-            <input type="text" id="age" name="Age" required><br>
-
-            <label for="account_manager">Account Manager (0 or 1):</label>
-            <input type="text" id="account_manager" name="Account_Manager" required><br>
-
-            <label for="years">Years with Company:</label>
-            <input type="text" id="years" name="Years" required><br>
-
-            <label for="num_sites">Number of Sites:</label>
-            <input type="text" id="num_sites" name="Num_Sites" required><br>
-
-            <input type="submit" value="Submit">
-        </form>
-
-        <!-- Section pour afficher le résultat de la prédiction -->
-        {% if prediction %}
-        <div id="result">
-            <h2>Prediction: <strong>{{ prediction }}</strong></h2>
+    <div class="wrapper">
+        <div class="header">
+            <div class="tag">ML · Binary Classifier</div>
+            <h1>Customer <span>Churn</span><br>Prediction</h1>
+            <p>Entrez les informations du client pour estimer<br>le risque d'attrition.</p>
         </div>
-        {% endif %}
+
+        <div class="card">
+            <form id="churnForm" novalidate>
+
+                <div class="field">
+                    <label><span class="dot"></span> Âge du client</label>
+                    <input type="number" id="Age" name="Age" placeholder="ex: 42" min="18" max="99" required>
+                </div>
+
+                <div class="field">
+                    <label><span class="dot"></span> Account Manager assigné</label>
+                    <div class="toggle-group">
+                        <button type="button" class="toggle-btn active" data-value="0" id="am_no"
+                            onclick="selectToggle('Account_Manager', 0)">Non</button>
+                        <button type="button" class="toggle-btn" data-value="1" id="am_yes"
+                            onclick="selectToggle('Account_Manager', 1)">Oui</button>
+                    </div>
+                    <input type="hidden" id="Account_Manager" name="Account_Manager" value="0">
+                </div>
+
+                <div class="field">
+                    <label><span class="dot"></span> Années avec l'entreprise</label>
+                    <input type="number" id="Years" name="Years" placeholder="ex: 3.5" step="0.1" min="0" required>
+                </div>
+
+                <div class="field">
+                    <label><span class="dot"></span> Nombre de sites</label>
+                    <input type="number" id="Num_Sites" name="Num_Sites" placeholder="ex: 8" min="1" required>
+                </div>
+
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span class="label">Analyser le risque →</span>
+                    <div class="spinner"></div>
+                </button>
+            </form>
+
+            <!-- Result panel -->
+            <div id="resultPanel" class="result-panel">
+                <div class="divider"></div>
+                <div class="result-label">Résultat de la prédiction</div>
+
+                <div id="resultVerdict" class="result-verdict">
+                    <div class="verdict-icon" id="verdictIcon"></div>
+                    <div class="verdict-text">
+                        <div class="main" id="verdictMain"></div>
+                        <div class="sub" id="verdictSub"></div>
+                    </div>
+                </div>
+
+                <div class="proba-row">
+                    <span class="proba-label">Probabilité de churn</span>
+                    <span class="proba-value" id="probaValue">—</span>
+                </div>
+                <div class="proba-bar-track">
+                    <div class="proba-bar-fill" id="probaBar"></div>
+                </div>
+            </div>
+
+            <div id="errorPanel" class="result-panel">
+                <div class="divider"></div>
+                <div class="error-msg" id="errorMsg"></div>
+            </div>
+        </div>
+
+        <div class="footer">Powered by scikit-learn · Flask</div>
     </div>
+
+    <script>
+        let amValue = 0;
+
+        function selectToggle(fieldId, value) {
+            amValue = value;
+            document.getElementById(fieldId).value = value;
+            document.getElementById('am_no').classList.toggle('active', value === 0);
+            document.getElementById('am_yes').classList.toggle('active', value === 1);
+        }
+
+        document.getElementById('churnForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('submitBtn');
+            const resultPanel = document.getElementById('resultPanel');
+            const errorPanel  = document.getElementById('errorPanel');
+
+            // Reset & loading state
+            btn.classList.add('loading');
+            resultPanel.classList.remove('visible');
+            errorPanel.classList.remove('visible');
+
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    document.getElementById('errorMsg').textContent = 'Erreur : ' + data.error;
+                    errorPanel.classList.remove('visible');
+                    void errorPanel.offsetWidth; // reflow for re-animation
+                    errorPanel.classList.add('visible');
+                } else {
+                    const churn    = data.churn_prediction === 1;
+                    const probaPct = data.churn_probability ?? null;
+
+                    // Verdict
+                    const verdict = document.getElementById('resultVerdict');
+                    verdict.className = 'result-verdict ' + (churn ? 'churn' : 'retain');
+                    document.getElementById('verdictIcon').textContent = churn ? '⚠️' : '✅';
+                    document.getElementById('verdictMain').textContent = churn ? 'Risque de churn élevé' : 'Client fidélisé';
+                    document.getElementById('verdictMain').className    = 'main ' + (churn ? 'churn' : 'retain');
+                    document.getElementById('verdictSub').textContent   = churn
+                        ? 'Ce client est susceptible de résilier son contrat.'
+                        : 'Ce client devrait rester dans le portefeuille.';
+
+                    // Probability bar
+                    if (probaPct !== null) {
+                        document.getElementById('probaValue').textContent = probaPct + '%';
+                        const bar = document.getElementById('probaBar');
+                        bar.className = 'proba-bar-fill ' + (churn ? 'churn' : 'retain');
+                        // Trigger animation
+                        bar.style.width = '0%';
+                        setTimeout(() => { bar.style.width = probaPct + '%'; }, 50);
+                    }
+
+                    resultPanel.classList.remove('visible');
+                    void resultPanel.offsetWidth;
+                    resultPanel.classList.add('visible');
+                }
+            } catch (err) {
+                document.getElementById('errorMsg').textContent = 'Erreur réseau : ' + err.message;
+                errorPanel.classList.remove('visible');
+                void errorPanel.offsetWidth;
+                errorPanel.classList.add('visible');
+            } finally {
+                btn.classList.remove('loading');
+            }
+        });
+    </script>
 </body>
 </html>
