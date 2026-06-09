@@ -2,6 +2,8 @@ import os
 import joblib
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
+
 
 def test_train_model_file_exists():
     """Vérifie que le fichier churn_model_clean.pkl est créé après exécution de train.py"""
@@ -9,11 +11,19 @@ def test_train_model_file_exists():
         "Le fichier churn_model_clean.pkl n'existe pas après l'exécution de train.py."
     )
 
+
+
 def test_train_model_loading():
-    """Vérifie que le fichier sauvegardé contient un modèle Random Forest"""
+    """Vérifie que le fichier sauvegardé contient un pipeline"""
+    
     model = joblib.load('data/churn_model_clean.pkl')
-    assert isinstance(model, LogisticRegression), (
-        "Le fichier churn_model_clean.pkl ne contient pas un modèle LogisticRegression."
+
+    assert isinstance(model, Pipeline), (
+        "Le fichier sauvegardé ne contient pas un Pipeline."
+    )
+
+    assert isinstance(model.named_steps['classifier'], LogisticRegression), (
+        "Le pipeline ne contient pas une régression logistique."
     )
 
 def test_train_model_prediction():
