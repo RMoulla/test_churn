@@ -2,7 +2,7 @@ import pandas as pd
 import joblib
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler     
 from sklearn.pipeline import Pipeline
 
 # Charger les données
