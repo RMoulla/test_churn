@@ -1,24 +1,29 @@
-import pandas as pd   
-import numpy as np 
-from sklearn.linear_model import LogisticRegression  
-import joblib                      
-       
-# Charger les données                                        
-data = pd.read_csv('data/train_data.csv')                         
+import pandas as pd
+import joblib
 
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
 
-X = data[['Age', 'Account_Manager', 'Years', 'Num_Sites']] 
+# Charger les données
+data = pd.read_csv('data/train_data.csv')
 
-# Sélectionner la colonne cible
+# Variables explicatives
+X = data[['Age', 'Account_Manager', 'Years', 'Num_Sites']]
+
+# Variable cible
 y = data['Churn']
 
-# Créer et entraîner le modèle de régression logistique
-model = LogisticRegression()
+# Pipeline : standardisation + modèle
+model = Pipeline([
+    ('scaler', StandardScaler()),
+    ('classifier', LogisticRegression())
+])
 
-# Entraîner le modèle sur les données
+# Entraînement
 model.fit(X, y)
 
-# Sauvegarder le modèle entraîné avec joblib (sans dépendances pandas)
+# Sauvegarde du pipeline complet
 joblib.dump(model, 'data/churn_model_clean.pkl')
 
-print("Modèle de régression logistique entraîné et sauvegardé sous 'churn_model_clean.pkl'.")
+print("Pipeline entraîné et sauvegardé.")
